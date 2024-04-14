@@ -1,6 +1,7 @@
+//Authorize account
 var client_id = 'a4ca0cb73fb24d80b61013728988297f';
 var client_secret = '50d503111168433e8baa8963c44a9eeb';
-//Authorize account
+
 var authOptions = {
   url: 'https://accounts.spotify.com/api/token',
   headers: {
