@@ -19,7 +19,8 @@ request.post(authOptions, function(error, response, body) {
 });
 /*--------------------------------------------------------------------------------------------------------*/
 const clientId = "a4ca0cb73fb24d80b61013728988297f"; // Replace with your client ID
-const code = undefined;
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
 
 if (!code) {
     redirectToAuthCodeFlow(clientId);
@@ -96,7 +97,7 @@ async function fetchProfile(token) {
 }
 
 /*------------------------------------------------------------------------------------------------------------------------------------*/
-//populate profile data
+//populate profile data api
 function populateUI(profile) {
   document.getElementById("displayName").innerText = profile.display_name;
   if (profile.images[0]) {
