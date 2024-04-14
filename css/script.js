@@ -1,6 +1,6 @@
 var client_id = 'a4ca0cb73fb24d80b61013728988297f';
 var client_secret = '50d503111168433e8baa8963c44a9eeb';
-
+//Authorize account
 var authOptions = {
   url: 'https://accounts.spotify.com/api/token',
   headers: {
@@ -17,7 +17,7 @@ request.post(authOptions, function(error, response, body) {
     var token = body.access_token;
   }
 });
-
+/*--------------------------------------------------------------------------------------------------------*/
 const clientId = "a4ca0cb73fb24d80b61013728988297f"; // Replace with your client ID
 const code = undefined;
 
@@ -28,7 +28,7 @@ if (!code) {
     const profile = await fetchProfile(accessToken);
     populateUI(profile);
 }
-
+// export authentication
  export async function redirectToAuthCodeFlow(clientId) {
   const verifier = generateCodeVerifier(128);
   const challenge = await generateCodeChallenge(verifier);
@@ -45,8 +45,30 @@ if (!code) {
 
   document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
+function generateCodeVerifier(length) {
+  let text = '';
+  let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-async function getAccessToken(clientId, code) {
+  for (let i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
+
+async function generateCodeChallenge(codeVerifier) {
+  const data = new TextEncoder().encode(codeVerifier);
+  const digest = await window.crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------*/
+// export token
+export async function getAccessToken(clientId, code) {
+  const verifier = localStorage.getItem("verifier");
+
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("grant_type", "authorization_code");
@@ -65,12 +87,32 @@ async function getAccessToken(clientId, code) {
 }
 
 async function fetchProfile(token) {
-    // TODO: Call Web API
+  const result = await fetch("https://api.spotify.com/v1/me", {
+      method: "GET", headers: { Authorization: `Bearer ${token}` }
+  });
+
+  return await result.json();
+
 }
 
+/*------------------------------------------------------------------------------------------------------------------------------------*/
+//populate profile data
 function populateUI(profile) {
-    // TODO: Update UI with profile data
+  document.getElementById("displayName").innerText = profile.display_name;
+  if (profile.images[0]) {
+      const profileImage = new Image(200, 200);
+      profileImage.src = profile.images[0].url;
+      document.getElementById("avatar").appendChild(profileImage);
+      document.getElementById("imgUrl").innerText = profile.images[0].url;
+  }
+  document.getElementById("id").innerText = profile.id;
+  document.getElementById("email").innerText = profile.email;
+  document.getElementById("uri").innerText = profile.uri;
+  document.getElementById("uri").setAttribute("href", profile.external_urls.spotify);
+  document.getElementById("url").innerText = profile.href;
+  document.getElementById("url").setAttribute("href", profile.href);
 }
+
 
 
 
