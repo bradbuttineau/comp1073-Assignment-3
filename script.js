@@ -1,4 +1,4 @@
-//Authorize account
+//AUTHORIZE ACCOUNT
 var client_id = 'a4ca0cb73fb24d80b61013728988297f';
 var client_secret = '50d503111168433e8baa8963c44a9eeb';
 
@@ -28,9 +28,9 @@ if (!code) {
 } else {
     const accessToken = await getAccessToken(clientId, code);
     const profile = await fetchProfile(accessToken);
+    console.log(profile); // Profile data logs to console
     populateUI(profile);
 }
-// export authentication
 export async function redirectToAuthCodeFlow(clientId) {
     const verifier = generateCodeVerifier(128);
     const challenge = await generateCodeChallenge(verifier);
@@ -47,6 +47,7 @@ export async function redirectToAuthCodeFlow(clientId) {
 
     document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
+
 function generateCodeVerifier(length) {
     let text = '';
     let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -65,9 +66,7 @@ async function generateCodeChallenge(codeVerifier) {
         .replace(/\//g, '_')
         .replace(/=+$/, '');
 }
-
-/*---------------------------------------------------------------------------------------------------------------------------*/
-// export token
+//ACCESS TOKEN//
 export async function getAccessToken(clientId, code) {
     const verifier = localStorage.getItem("verifier");
 
@@ -88,17 +87,16 @@ export async function getAccessToken(clientId, code) {
     return access_token;
 }
 
+
+//FETCH PROFILE//
 async function fetchProfile(token) {
     const result = await fetch("https://api.spotify.com/v1/me", {
         method: "GET", headers: { Authorization: `Bearer ${token}` }
     });
 
     return await result.json();
-
 }
-
-/*------------------------------------------------------------------------------------------------------------------------------------*/
-//populate profile data api
+//POPULATE UI//
 function populateUI(profile) {
     document.getElementById("displayName").innerText = profile.display_name;
     if (profile.images[0]) {
@@ -114,3 +112,4 @@ function populateUI(profile) {
     document.getElementById("url").innerText = profile.href;
     document.getElementById("url").setAttribute("href", profile.href);
 }
+
