@@ -1,0 +1,12 @@
+html {
+    background-color: #400073;
+}
+
+body {
+    background-color: #fff;
+}
+
+h2,
+li {
+    color: hsl(273, 100%, 23%);
+}
